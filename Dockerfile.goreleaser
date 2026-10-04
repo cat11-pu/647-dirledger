@@ -1,0 +1,3 @@
+FROM scratch
+COPY gofmts /bin/gofmts
+ENTRYPOINT ["/bin/gofmts"]

@@ -1,0 +1,51 @@
+project_name: gofmts
+
+before:
+  hooks:
+    - go mod download
+    - go generate ./...
+
+builds:
+  - id: "gofmts"
+    binary: gofmts
+    dir: ./cmd/gofmts
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+dockers:
+  -
+    dockerfile: Dockerfile.goreleaser
+    image_templates:
+      - "ghcr.io/ashanbrown/{{.ProjectName}}:{{ .Tag }}"
+      - "ghcr.io/ashanbrown/{{.ProjectName}}:v{{ .Major }}"
+      - "ghcr.io/ashanbrown/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
+      - "ghcr.io/ashanbrown/{{.ProjectName}}:latest"
+      - "ashanbrown/{{.ProjectName}}:{{ .Tag }}"
+      - "ashanbrown/{{.ProjectName}}:v{{ .Major }}"
+      - "ashanbrown/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
+      - "ashanbrown/{{.ProjectName}}:latest"
